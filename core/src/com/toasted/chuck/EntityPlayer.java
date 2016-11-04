@@ -30,7 +30,7 @@ public class EntityPlayer extends Entity{
 		collision = new Rectangle(0, 0, 16, 16);
 		controller = new EntityController(){
 
-			public void acceptEvent(int keycode, boolean newState, Entity owner, ArrayList<Entity> entities) {
+			public void acceptEvent(int keycode, boolean newState, Entity owner, ArrayList<Entity> entities, ArrayList<Rectangle> collisions) {
 				
 				
 				if(newState){
@@ -50,6 +50,31 @@ public class EntityPlayer extends Entity{
 							holding.shouldDrawSelf = true;
 							
 							holding = null;
+						}
+						break;
+					case Keys.Z: //Drop the beat
+						if(holding != null){
+							
+							
+							Rectangle boxCollision = new Rectangle(holding.collision);
+							
+							
+							boxCollision.x += getDirectionalVector().x * 16;
+							boxCollision.y += getDirectionalVector().y * 16;
+							boolean collides = false;
+							for(Rectangle r: collisions){
+								if(r.overlaps(boxCollision)){
+									//can't place it here
+									collides = true;
+									break;
+								}
+							}
+							if(!collides){
+								holding.shouldDrawSelf = true;
+								holding.position.mulAdd(getDirectionalVector(), 16);
+								holding = null;
+							
+							}
 						}
 					}
 					if(keycode == Keys.UP || keycode == Keys.DOWN || keycode == Keys.LEFT || keycode == Keys.RIGHT){

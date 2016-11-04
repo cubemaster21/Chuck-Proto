@@ -23,7 +23,7 @@ public class ChuckGame extends ApplicationAdapter implements InputProcessor{
 	ArrayList<Entity> entities = new ArrayList<Entity>();
 	Comparator<Entity> zSorter;
 	TiledMap tiledMap;
-	TiledMapRenderer tmRenderer;
+	OrthogonalTiledMapRenderer tmRenderer;
 	ArrayList<Rectangle> collisions = new ArrayList<Rectangle>();
 	@Override
 	public void create () {
@@ -42,7 +42,7 @@ public class ChuckGame extends ApplicationAdapter implements InputProcessor{
 			
 		};
 		tiledMap = new TmxMapLoader().load("testmap.tmx");
-		tmRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+		tmRenderer = new OrthogonalTiledMapRenderer(tiledMap, graphics.getBatch());
 		
 		MapLayer ml = tiledMap.getLayers().get("collisions");
 		for(MapObject o: ml.getObjects()){
@@ -51,6 +51,7 @@ public class ChuckGame extends ApplicationAdapter implements InputProcessor{
 			collisions.add(r);
 			
 		}
+		
 		
 		
 	}
@@ -78,7 +79,7 @@ public class ChuckGame extends ApplicationAdapter implements InputProcessor{
 		tmRenderer.setView(graphics.cam);
 		tmRenderer.render();
 		graphics.startSprite();
-		
+//		tmRenderer.getBatch().setShader(graphics.shader);
 		
 //		player.draw(graphics);
 		for(Entity e: entities){
@@ -95,13 +96,13 @@ public class ChuckGame extends ApplicationAdapter implements InputProcessor{
 
 	@Override
 	public boolean keyDown(int keycode) {
-		player.controller.acceptEvent(keycode, true, player, entities);
+		player.controller.acceptEvent(keycode, true, player, entities, collisions);
 		return false;
 	}
 
 	@Override
 	public boolean keyUp(int keycode) {
-		player.controller.acceptEvent(keycode, false, player, entities);
+		player.controller.acceptEvent(keycode, false, player, entities, collisions);
 		return false;
 	}
 
