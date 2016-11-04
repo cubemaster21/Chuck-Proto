@@ -12,10 +12,10 @@ import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 
 public class ChuckGame extends ApplicationAdapter implements InputProcessor{
 	Graphics graphics;
@@ -25,6 +25,8 @@ public class ChuckGame extends ApplicationAdapter implements InputProcessor{
 	TiledMap tiledMap;
 	OrthogonalTiledMapRenderer tmRenderer;
 	ArrayList<Rectangle> collisions = new ArrayList<Rectangle>();
+	ArrayList<Light> lights = new ArrayList<Light>();
+	Light playerLight;
 	@Override
 	public void create () {
 		Gdx.input.setInputProcessor(this);
@@ -43,6 +45,9 @@ public class ChuckGame extends ApplicationAdapter implements InputProcessor{
 		};
 		tiledMap = new TmxMapLoader().load("testmap.tmx");
 		tmRenderer = new OrthogonalTiledMapRenderer(tiledMap, graphics.getBatch());
+		playerLight = new Light(8, 8, 1);
+		lights.add(playerLight);
+		lights.add(new Light( 100, 100, .3f));
 		
 		MapLayer ml = tiledMap.getLayers().get("collisions");
 		for(MapObject o: ml.getObjects()){
@@ -51,7 +56,14 @@ public class ChuckGame extends ApplicationAdapter implements InputProcessor{
 			collisions.add(r);
 			
 		}
-		
+		MapLayer lightLayer = tiledMap.getLayers().get("lights");
+		Vector2 t = new Vector2();
+		for(MapObject o: lightLayer.getObjects()){
+			RectangleMapObject rmo = (RectangleMapObject) o;
+			t = new Rectangle(rmo.getRectangle()).getCenter(t);
+			lights.add(new Light(t.x, t.y, .3f));
+			
+		}
 		
 		
 	}
@@ -59,13 +71,13 @@ public class ChuckGame extends ApplicationAdapter implements InputProcessor{
 	@Override
 	public void render () {
 		
-//		player.update(Gdx.graphics.getDeltaTime(), entities);
 		for(Entity e: entities){
 			e.update(Gdx.graphics.getDeltaTime(), entities, collisions);
 		}
 		Collections.sort(entities, zSorter);
+		playerLight.position.x = player.position.x + 8;
+		playerLight.position.y = player.position.y + 8;
 		
-//		graphics.cam.lookAt(player.position.x, player.position.y, 0);
 		graphics.cam.position.x =  player.position.x + 8;
 		graphics.cam.position.y = player.position.y + 8;
 		
@@ -73,21 +85,20 @@ public class ChuckGame extends ApplicationAdapter implements InputProcessor{
 		
 
 		graphics.prepare();
+		graphics.passLightsToShader(lights);
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
 		tmRenderer.setView(graphics.cam);
 		tmRenderer.render();
 		graphics.startSprite();
-//		tmRenderer.getBatch().setShader(graphics.shader);
 		
-//		player.draw(graphics);
 		for(Entity e: entities){
 			if(e.shouldDrawSelf)
 				e.draw(graphics);
 		}
 		graphics.endSprite();
-//		graphics.endShapes();
+		System.out.println("FPS:" + Gdx.graphics.getFramesPerSecond());
 	}
 	
 	@Override
