@@ -25,7 +25,7 @@ public class EntityPlayer extends Entity implements LightEmitter{
 	private ArrayList<Integer> directionals = new ArrayList<Integer>();//Don't think I'll use this
 	private boolean[] arrowKeys = new boolean[4]; //UDLR
 	public EntityPlayer(){
-		
+		weight = 1;
 		isChuckable = false;
 		for(int i = 0;i < 4;i++){
 			sprites[i] = new TextureRegion(playerArt, i * 16, 0, 16, 16);

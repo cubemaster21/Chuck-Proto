@@ -3,16 +3,18 @@ package com.toasted.chuck;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
@@ -27,11 +29,13 @@ public class ChuckGame extends ApplicationAdapter implements InputProcessor{
 	EntityPlayer player;
 	ArrayList<Entity> entities = new ArrayList<Entity>();
 	Comparator<Entity> zSorter;
-	TiledMap tiledMap;
+	public static TiledMap tiledMap;
 	OrthogonalTiledMapRenderer tmRenderer;
 	ArrayList<Rectangle> collisions = new ArrayList<Rectangle>();
 	ArrayList<Light> lights = new ArrayList<Light>();
 	boolean testLightFade = false;
+	public static HashMap<Rectangle, MapObject> collisionLookupTable = new HashMap<Rectangle, MapObject>();
+//	public static ArrayList<String> hiddenLayers = new ArrayList<String>();
 	
 	@Override
 	public void create () {
@@ -53,11 +57,19 @@ public class ChuckGame extends ApplicationAdapter implements InputProcessor{
 		tmRenderer = new OrthogonalTiledMapRenderer(tiledMap, graphics.getBatch());
 		lights.add(player.getLight());
 		
+		for(MapLayer ml: tiledMap.getLayers()){
+			if(ml.getName().contains("secret")){
+//				hiddenLayers.add(ml.getName());
+				ml.setVisible(false);
+			}
+		}
+		
 		MapLayer ml = tiledMap.getLayers().get("collisions");
 		for(MapObject o: ml.getObjects()){
 			RectangleMapObject rmo = (RectangleMapObject) o;
 			Rectangle r = new Rectangle(rmo.getRectangle());
 			collisions.add(r);
+			collisionLookupTable.put(r, o);
 			
 		}
 		MapLayer lightLayer = tiledMap.getLayers().get("staticLights");
@@ -109,6 +121,7 @@ public class ChuckGame extends ApplicationAdapter implements InputProcessor{
 		
 		tmRenderer.setView(graphics.cam);
 		tmRenderer.render();
+		
 		graphics.startSprite();
 		
 		for(Entity e: entities){

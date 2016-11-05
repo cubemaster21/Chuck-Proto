@@ -15,11 +15,13 @@ public abstract class Entity {
 	protected float flyLength;
 	protected boolean isChuckable = true;
 	protected boolean shouldDrawSelf = true;
+	protected float weight = 0; //used for destruction capabilities and pressure plate triggering
 	public Entity(){
 		
 	}
 	public abstract void update(float delta, ArrayList<Entity> entities, ArrayList<Rectangle> collisions);
-	protected void doCollisions(float delta, ArrayList<Rectangle> collisions){
+	protected Rectangle doCollisions(float delta, ArrayList<Rectangle> collisions){
+		Rectangle collidedWith = null;
 		position.x += velocity.x * delta;
 		
 		collision.x = position.x;
@@ -35,6 +37,7 @@ public abstract class Entity {
 					position.x += overlap;
 					velocity.x = 0;
 				}
+				collidedWith = r;
 			}
 		}
 		collision.x = position.x;
@@ -55,9 +58,11 @@ public abstract class Entity {
 					position.y += overlap;
 					velocity.y = 0;
 				}
+				collidedWith = r;
 			}
 		}
 		collision.y = position.y;
+		return collidedWith;
 	}
 	public abstract void draw(Graphics g);
 	public Vector2 getCenterPoint(){

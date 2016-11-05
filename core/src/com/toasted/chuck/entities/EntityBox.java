@@ -2,9 +2,10 @@ package com.toasted.chuck.entities;
 
 import java.util.ArrayList;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.math.Rectangle;
+import com.toasted.chuck.ChuckGame;
 import com.toasted.chuck.Graphics;
 
 public class EntityBox extends Entity{
@@ -17,12 +18,25 @@ public class EntityBox extends Entity{
 		position.x = x;
 		position.y = y;
 		collision = new Rectangle(x, y, 16, 16);
+		weight = 1;
 	}
 	public void update(float delta, ArrayList<Entity> entities, ArrayList<Rectangle> collisions) {
 		flyLength -= delta;
 		if(flyLength <= 0)
 			velocity.mulAdd(velocity, -delta * decel);
-		doCollisions(delta, collisions);
+		Rectangle r = doCollisions(delta, collisions);
+		if(r != null){
+			if(ChuckGame.collisionLookupTable.get(r).getProperties().containsKey("destructable") && weight > .75f){
+				String layerOpened = (String) ChuckGame.collisionLookupTable.get(r).getProperties().get("destructable");
+				collisions.remove(r);
+				MapLayer layer = ChuckGame.tiledMap.getLayers().get(layerOpened);
+				if(layer != null){
+					layer.setVisible(true);
+				} else {
+					System.err.println("Woah, no layer?");
+				}
+			}
+		}
 	}
 
 	public void draw(Graphics g) {
