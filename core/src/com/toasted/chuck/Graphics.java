@@ -22,7 +22,7 @@ public class Graphics {
     final int orthoX = 16 * 28;
     final int orthoY = 9  * 28;
     final float orthoScale = orthoX / (float)getWidth();
-    
+    public float lightValueMultiplier = 1f; // for testing fade out
     
     ShaderProgram shader = new ShaderProgram(VERTEX, FRAGMENT);
 	public Graphics(){
@@ -77,6 +77,7 @@ public class Graphics {
 			
 		} else {
 			shader.setUniformi("u_actualLights", lights.size());
+			shader.setUniformf("u_ambientLight", 0f);
 			int loc = shader.getUniformLocation("u_lightCoord[" + 0 + "]");
 			int locIn = shader.getUniformLocation("u_lightIntensity[0]");
 			for(int i = 0;i < lights.size();i++){
@@ -84,7 +85,7 @@ public class Graphics {
 				Vector3 v3 = cam.project(new Vector3(lights.get(i).position.x, lights.get(i).position.y, 0));
 				Vector2 v = new Vector2(v3.x, v3.y);
 				shader.setUniformf(loc + i, v);
-				shader.setUniformf(locIn + i, lights.get(i).intensity);
+				shader.setUniformf(locIn + i, lights.get(i).intensity * lightValueMultiplier);
 			}
 		}
 	}

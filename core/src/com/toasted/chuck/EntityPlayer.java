@@ -9,7 +9,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-public class EntityPlayer extends Entity{
+public class EntityPlayer extends Entity implements LightEmitter{
+	Light illuminator;
 	Texture playerArt = new Texture("player.png");
 	TextureRegion[] sprites = new TextureRegion[8];
 	float moveSpeed = 100;
@@ -21,6 +22,7 @@ public class EntityPlayer extends Entity{
 	private ArrayList<Integer> directionals = new ArrayList<Integer>();//Don't think I'll use this
 	private boolean[] arrowKeys = new boolean[4]; //UDLR
 	public EntityPlayer(){
+		
 		isChuckable = false;
 		for(int i = 0;i < 4;i++){
 			sprites[i] = new TextureRegion(playerArt, i * 16, 0, 16, 16);
@@ -28,6 +30,7 @@ public class EntityPlayer extends Entity{
 		}
 		lastVelocity = new Vector2();
 		collision = new Rectangle(0, 0, 16, 16);
+		illuminator = new Light(position.x + collision.width / 2, position.y + collision.height / 2, Light.VAL_PLAYER);
 		controller = new EntityController(){
 
 			public void acceptEvent(int keycode, boolean newState, Entity owner, ArrayList<Entity> entities, ArrayList<Rectangle> collisions) {
@@ -171,6 +174,11 @@ public class EntityPlayer extends Entity{
 			holding.position.x = position.x;
 			holding.position.y = position.y;
 		}
+		
+		illuminator.position.x = position.x + collision.width / 2;
+		illuminator.position.y = position.y + collision.height / 2;
+		
+		
 	}
 
 	@Override
@@ -206,5 +214,8 @@ public class EntityPlayer extends Entity{
 			return new Vector2(1, 0);
 		}
 		return new Vector2(0, -1);
+	}
+	public Light getLight() {
+		return illuminator;
 	}
 }

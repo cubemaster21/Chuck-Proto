@@ -5,6 +5,7 @@ uniform vec2 u_screenResolution;
 uniform vec2 u_lightCoord[50];
 uniform float u_lightIntensity[50];
 uniform int u_actualLights;
+uniform float u_ambientLight;
 
 //"in" varyings from our vertex shader
 varying vec4 vColor;
@@ -31,7 +32,7 @@ void main() {
    //Distance is measured in pixels
    
 
-   float brightest = 0;
+   float brightest = u_ambientLight;
    for(int i = 0;i < u_actualLights;i++){
    	float dis2Light = getDistance(gl_FragCoord.x, gl_FragCoord.y, u_lightCoord[i].x, u_lightCoord[i].y);
    	float dis2Light2 = (1-(min(dis2Light/(disFull * u_lightIntensity[i]), 1)));

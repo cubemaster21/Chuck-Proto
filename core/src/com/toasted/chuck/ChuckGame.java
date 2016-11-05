@@ -7,6 +7,7 @@ import java.util.Comparator;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
@@ -26,7 +27,9 @@ public class ChuckGame extends ApplicationAdapter implements InputProcessor{
 	OrthogonalTiledMapRenderer tmRenderer;
 	ArrayList<Rectangle> collisions = new ArrayList<Rectangle>();
 	ArrayList<Light> lights = new ArrayList<Light>();
-	Light playerLight;
+	
+	boolean testLightFade = false;
+	
 	@Override
 	public void create () {
 		Gdx.input.setInputProcessor(this);
@@ -45,9 +48,7 @@ public class ChuckGame extends ApplicationAdapter implements InputProcessor{
 		};
 		tiledMap = new TmxMapLoader().load("testmap.tmx");
 		tmRenderer = new OrthogonalTiledMapRenderer(tiledMap, graphics.getBatch());
-		playerLight = new Light(8, 8, 1);
-		lights.add(playerLight);
-		lights.add(new Light( 100, 100, .3f));
+		lights.add(player.getLight());
 		
 		MapLayer ml = tiledMap.getLayers().get("collisions");
 		for(MapObject o: ml.getObjects()){
@@ -56,15 +57,26 @@ public class ChuckGame extends ApplicationAdapter implements InputProcessor{
 			collisions.add(r);
 			
 		}
-		MapLayer lightLayer = tiledMap.getLayers().get("lights");
+		MapLayer lightLayer = tiledMap.getLayers().get("staticLights");
 		Vector2 t = new Vector2();
 		for(MapObject o: lightLayer.getObjects()){
 			RectangleMapObject rmo = (RectangleMapObject) o;
 			t = new Rectangle(rmo.getRectangle()).getCenter(t);
-			lights.add(new Light(t.x, t.y, .3f));
+			lights.add(new Light(t.x, t.y, Light.VAL_TORCH));
 			
 		}
-		
+		MapLayer objectLayer = tiledMap.getLayers().get("objectSpawn");
+		for(MapObject o: objectLayer.getObjects()){
+			RectangleMapObject rmo = (RectangleMapObject) o;
+			Rectangle r = new Rectangle(rmo.getRectangle());
+			t = r.getCenter(t);
+					
+//			System.out.println(o.getProperties().get("type"));
+			if(o.getProperties().get("type").equals("torch")){
+				EntityTorch torch = new EntityTorch(t.x - r.getWidth() / 2, t.y - r.getHeight() / 2);
+				spawnEntity(torch);
+			}
+		}
 		
 	}
 
@@ -75,14 +87,17 @@ public class ChuckGame extends ApplicationAdapter implements InputProcessor{
 			e.update(Gdx.graphics.getDeltaTime(), entities, collisions);
 		}
 		Collections.sort(entities, zSorter);
-		playerLight.position.x = player.position.x + 8;
-		playerLight.position.y = player.position.y + 8;
 		
 		graphics.cam.position.x =  player.position.x + 8;
 		graphics.cam.position.y = player.position.y + 8;
 		
 		graphics.cam.update();
 		
+		
+		if(testLightFade){
+			graphics.lightValueMultiplier -= Gdx.graphics.getDeltaTime();
+			graphics.lightValueMultiplier = Math.max(0, graphics.lightValueMultiplier);
+		}
 
 		graphics.prepare();
 		graphics.passLightsToShader(lights);
@@ -98,7 +113,13 @@ public class ChuckGame extends ApplicationAdapter implements InputProcessor{
 				e.draw(graphics);
 		}
 		graphics.endSprite();
-		System.out.println("FPS:" + Gdx.graphics.getFramesPerSecond());
+//		System.out.println("FPS:" + Gdx.graphics.getFramesPerSecond());
+	}
+	public void spawnEntity(Entity e){
+		if(e instanceof LightEmitter){
+			lights.add(((LightEmitter) e).getLight());
+		}
+		entities.add(e);
 	}
 	
 	@Override
@@ -114,6 +135,11 @@ public class ChuckGame extends ApplicationAdapter implements InputProcessor{
 	@Override
 	public boolean keyUp(int keycode) {
 		player.controller.acceptEvent(keycode, false, player, entities, collisions);
+		switch(keycode){
+		case Keys.F:
+			testLightFade = true;
+			break;
+		}
 		return false;
 	}
 
