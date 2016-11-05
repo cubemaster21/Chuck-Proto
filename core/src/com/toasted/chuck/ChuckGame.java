@@ -17,6 +17,10 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.toasted.chuck.entities.Entity;
+import com.toasted.chuck.entities.EntityBox;
+import com.toasted.chuck.entities.EntityPlayer;
+import com.toasted.chuck.entities.EntityTorch;
 
 public class ChuckGame extends ApplicationAdapter implements InputProcessor{
 	Graphics graphics;
@@ -27,7 +31,6 @@ public class ChuckGame extends ApplicationAdapter implements InputProcessor{
 	OrthogonalTiledMapRenderer tmRenderer;
 	ArrayList<Rectangle> collisions = new ArrayList<Rectangle>();
 	ArrayList<Light> lights = new ArrayList<Light>();
-	
 	boolean testLightFade = false;
 	
 	@Override
@@ -41,7 +44,7 @@ public class ChuckGame extends ApplicationAdapter implements InputProcessor{
 		zSorter = new Comparator<Entity>(){
 
 			public int compare(Entity arg0, Entity arg1) {
-				return (int) Math.signum(arg1.position.y - arg0.position.y);
+				return (int) Math.signum(arg1.getY() - arg0.getY());
 				
 			}
 			
@@ -88,8 +91,8 @@ public class ChuckGame extends ApplicationAdapter implements InputProcessor{
 		}
 		Collections.sort(entities, zSorter);
 		
-		graphics.cam.position.x =  player.position.x + 8;
-		graphics.cam.position.y = player.position.y + 8;
+		graphics.cam.position.x =  player.getCenterX();
+		graphics.cam.position.y = player.getCenterY();
 		
 		graphics.cam.update();
 		
@@ -109,8 +112,7 @@ public class ChuckGame extends ApplicationAdapter implements InputProcessor{
 		graphics.startSprite();
 		
 		for(Entity e: entities){
-			if(e.shouldDrawSelf)
-				e.draw(graphics);
+			e.draw(graphics);
 		}
 		graphics.endSprite();
 //		System.out.println("FPS:" + Gdx.graphics.getFramesPerSecond());
@@ -128,13 +130,13 @@ public class ChuckGame extends ApplicationAdapter implements InputProcessor{
 
 	@Override
 	public boolean keyDown(int keycode) {
-		player.controller.acceptEvent(keycode, true, player, entities, collisions);
+		player.getController().acceptEvent(keycode, true, player, entities, collisions);
 		return false;
 	}
 
 	@Override
 	public boolean keyUp(int keycode) {
-		player.controller.acceptEvent(keycode, false, player, entities, collisions);
+		player.getController().acceptEvent(keycode, false, player, entities, collisions);
 		switch(keycode){
 		case Keys.F:
 			testLightFade = true;

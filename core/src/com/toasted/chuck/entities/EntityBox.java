@@ -1,10 +1,11 @@
-package com.toasted.chuck;
+package com.toasted.chuck.entities;
 
 import java.util.ArrayList;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
+import com.toasted.chuck.Graphics;
 
 public class EntityBox extends Entity{
 	float decel = 25;
@@ -27,10 +28,12 @@ public class EntityBox extends Entity{
 	public void draw(Graphics g) {
 //		g.getShapes().setColor(Color.BLUE);
 //		g.getShapes().rect(position.x, position.y + (float)Math.sin((1 - Math.max(flyLength, 0) / .5f) * Math.PI) * 8, 16, 16);
-		draw(g, 0, 0);
+		if(shouldDrawSelf)
+			draw(g, 0, 0);
 		
 	}
 	public void draw(Graphics g, float dx, float dy){
+		
 		if(flyLength >= 0){
 			g.getBatch().draw(shadow, position.x, position.y-1);
 		}

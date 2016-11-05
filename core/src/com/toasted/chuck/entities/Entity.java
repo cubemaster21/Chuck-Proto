@@ -1,18 +1,20 @@
-package com.toasted.chuck;
+package com.toasted.chuck.entities;
 
 import java.util.ArrayList;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.toasted.chuck.EntityController;
+import com.toasted.chuck.Graphics;
 
 public abstract class Entity {
-	public Vector2 position = new Vector2();
-	public Vector2 velocity = new Vector2();
-	public EntityController controller;
-	public Rectangle collision;
-	float flyLength;
-	public boolean isChuckable = true;
-	boolean shouldDrawSelf = true;
+	protected Vector2 position = new Vector2();
+	protected Vector2 velocity = new Vector2();
+	protected EntityController controller;
+	protected Rectangle collision;
+	protected float flyLength;
+	protected boolean isChuckable = true;
+	protected boolean shouldDrawSelf = true;
 	public Entity(){
 		
 	}
@@ -58,7 +60,25 @@ public abstract class Entity {
 		collision.y = position.y;
 	}
 	public abstract void draw(Graphics g);
+	public Vector2 getCenterPoint(){
+		return new Vector2(getCenterX(), getCenterY());
+	}
+	public float getCenterX(){
+		return position.x + collision.width / 2;
+	}
+	public float getCenterY(){
+		return position.y + collision.height / 2;
+	}
 	public void draw(Graphics g, float dx, float dy){
 		draw(g);
+	}
+	public float getX(){
+		return position.x;
+	}
+	public float getY(){
+		return position.y;
+	}
+	public EntityController getController(){
+		return controller;
 	}
 }

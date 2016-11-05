@@ -1,4 +1,4 @@
-package com.toasted.chuck;
+package com.toasted.chuck.entities;
 
 import java.util.ArrayList;
 
@@ -8,17 +8,20 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.toasted.chuck.EntityController;
+import com.toasted.chuck.Graphics;
+import com.toasted.chuck.Light;
+import com.toasted.chuck.LightEmitter;
 
 public class EntityPlayer extends Entity implements LightEmitter{
-	Light illuminator;
-	Texture playerArt = new Texture("player.png");
-	TextureRegion[] sprites = new TextureRegion[8];
-	float moveSpeed = 100;
-	float throwSpeed = 100;
-	Entity holding;
-	Vector2 lastVelocity;
-	int lastDirectionalUsed;
-	int lastXDirectional, lastYDirectional;
+	protected Light illuminator;
+	protected Texture playerArt = new Texture("player.png");
+	protected TextureRegion[] sprites = new TextureRegion[8];
+	private float moveSpeed = 100;
+	private float throwSpeed = 100;
+	private Entity holding;
+	private Vector2 lastVelocity;
+	private int lastDirectionalUsed;
 	private ArrayList<Integer> directionals = new ArrayList<Integer>();//Don't think I'll use this
 	private boolean[] arrowKeys = new boolean[4]; //UDLR
 	public EntityPlayer(){
@@ -175,8 +178,8 @@ public class EntityPlayer extends Entity implements LightEmitter{
 			holding.position.y = position.y;
 		}
 		
-		illuminator.position.x = position.x + collision.width / 2;
-		illuminator.position.y = position.y + collision.height / 2;
+		illuminator.getPosition().x = position.x + collision.width / 2;
+		illuminator.getPosition().y = position.y + collision.height / 2;
 		
 		
 	}
