@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 public class Light {
 	public final static float VAL_TORCH = .4f;
 	public final static float VAL_PLAYER = .9f;
-	public final static float VAL_AMBIENT = 0f;
+	public final static float VAL_AMBIENT = .25f;
 	private static Vector2 tmp = new Vector2();
 	private Vector2 position;
 	private float intensity = 1;

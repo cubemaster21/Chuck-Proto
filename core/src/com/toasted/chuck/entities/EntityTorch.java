@@ -1,11 +1,9 @@
 package com.toasted.chuck.entities;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Rectangle;
 import com.toasted.chuck.Graphics;
+import com.toasted.chuck.Level;
 import com.toasted.chuck.Light;
 import com.toasted.chuck.LightEmitter;
 
@@ -24,8 +22,8 @@ public class EntityTorch extends EntityBox implements LightEmitter{
 	}
 
 	@Override
-	public void update(float delta, ArrayList<Entity> entities, ArrayList<Rectangle> collisions) {
-		super.update(delta, entities, collisions);
+	public void update(float delta, Level lvl) {
+		super.update(delta, lvl);
 		emitter.getPosition().set(position).add(collision.width / 2, 3 * collision.height / 4);
 	}
 

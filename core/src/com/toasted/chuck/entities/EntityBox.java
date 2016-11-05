@@ -1,12 +1,11 @@
 package com.toasted.chuck.entities;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.math.Rectangle;
 import com.toasted.chuck.ChuckGame;
 import com.toasted.chuck.Graphics;
+import com.toasted.chuck.Level;
 
 public class EntityBox extends Entity{
 	float decel = 25;
@@ -20,21 +19,17 @@ public class EntityBox extends Entity{
 		collision = new Rectangle(x, y, 16, 16);
 		weight = 1;
 	}
-	public void update(float delta, ArrayList<Entity> entities, ArrayList<Rectangle> collisions) {
+	public void update(float delta, Level lvl) {
 		flyLength -= delta;
 		if(flyLength <= 0)
 			velocity.mulAdd(velocity, -delta * decel);
-		Rectangle r = doCollisions(delta, collisions);
+		Rectangle r = doCollisions(delta, lvl.getCollisions());
 		if(r != null){
-			if(ChuckGame.collisionLookupTable.get(r).getProperties().containsKey("destructable") && weight > .75f){
-				String layerOpened = (String) ChuckGame.collisionLookupTable.get(r).getProperties().get("destructable");
-				collisions.remove(r);
-				MapLayer layer = ChuckGame.tiledMap.getLayers().get(layerOpened);
-				if(layer != null){
-					layer.setVisible(true);
-				} else {
-					System.err.println("Woah, no layer?");
-				}
+			if(lvl.isCollisionBoxDestructable(r) && weight > .75f){
+				MapProperties mp = lvl.getCollisionProperties(r);
+				String layerOpened = (String) mp.get("destructable");
+				lvl.getCollisions().remove(r);
+				lvl.revealSecretRoom(layerOpened);
 			}
 		}
 	}

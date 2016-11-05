@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.toasted.chuck.EntityController;
 import com.toasted.chuck.Graphics;
+import com.toasted.chuck.Level;
 
 public abstract class Entity {
 	protected Vector2 position = new Vector2();
@@ -19,7 +20,7 @@ public abstract class Entity {
 	public Entity(){
 		
 	}
-	public abstract void update(float delta, ArrayList<Entity> entities, ArrayList<Rectangle> collisions);
+	public abstract void update(float delta, Level lvl);
 	protected Rectangle doCollisions(float delta, ArrayList<Rectangle> collisions){
 		Rectangle collidedWith = null;
 		position.x += velocity.x * delta;

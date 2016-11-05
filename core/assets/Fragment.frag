@@ -1,4 +1,5 @@
 #version 410 core
+#define M_PI 3.1415926535897932384626433832795
 //SpriteBatch will use texture unit 0
 uniform sampler2D u_texture;
 uniform vec2 u_screenResolution;
@@ -38,7 +39,7 @@ void main() {
    	float dis2Light2 = (1-(min(dis2Light/(disFull * u_lightIntensity[i]), 1)));
    	brightest = brightest + dis2Light2 - brightest * dis2Light2;
    }
-   texColor.rgb = texColor.rgb * (pow(brightest, 10));
+   texColor.rgb = texColor.rgb * (sin(pow(brightest, 10) * M_PI / 2));
    //final color
    gl_FragColor = texColor * vColor;
 }

@@ -2,7 +2,6 @@ package com.toasted.chuck.entities;
 
 import java.util.ArrayList;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -10,6 +9,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.toasted.chuck.EntityController;
 import com.toasted.chuck.Graphics;
+import com.toasted.chuck.Level;
 import com.toasted.chuck.Light;
 import com.toasted.chuck.LightEmitter;
 
@@ -36,14 +36,14 @@ public class EntityPlayer extends Entity implements LightEmitter{
 		illuminator = new Light(position.x + collision.width / 2, position.y + collision.height / 2, Light.VAL_PLAYER);
 		controller = new EntityController(){
 
-			public void acceptEvent(int keycode, boolean newState, Entity owner, ArrayList<Entity> entities, ArrayList<Rectangle> collisions) {
+			public void acceptEvent(int keycode, boolean newState, Level lvl) {
 				
 				
 				if(newState){
 					switch(keycode){
 					case Keys.SPACE:
 						if(holding == null)
-							for(Entity e: entities){
+							for(Entity e: lvl.getEntities()){
 								if(e.collision.overlaps(collision) && e.isChuckable){
 									holding = e;
 									holding.shouldDrawSelf = false;
@@ -68,7 +68,7 @@ public class EntityPlayer extends Entity implements LightEmitter{
 							boxCollision.x += getDirectionalVector().x * 16;
 							boxCollision.y += getDirectionalVector().y * 16;
 							boolean collides = false;
-							for(Rectangle r: collisions){
+							for(Rectangle r: lvl.getCollisions()){
 								if(r.overlaps(boxCollision)){
 									//can't place it here
 									collides = true;
@@ -128,7 +128,7 @@ public class EntityPlayer extends Entity implements LightEmitter{
 		
 		return -1;
 	}
-	private void doControls(ArrayList<Entity> entities){
+	private void doControls(){
 		for(int i = 0;i < 4;i++){
 			switch(i){
 			case 0: //UP
@@ -162,15 +162,15 @@ public class EntityPlayer extends Entity implements LightEmitter{
 			}
 		}
 	}
-	public void update(float delta, ArrayList<Entity> entities, ArrayList<Rectangle> collisions){
+	public void update(float delta, Level lvl){
 		
 		//test array based controls
 			
-		doControls(entities);
+		doControls();
 		
 		
 		
-		doCollisions(delta, collisions);
+		doCollisions(delta, lvl.getCollisions());
 		
 		
 		if(holding != null){
