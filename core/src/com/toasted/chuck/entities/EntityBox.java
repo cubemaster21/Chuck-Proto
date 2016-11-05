@@ -3,7 +3,6 @@ package com.toasted.chuck.entities;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.math.Rectangle;
-import com.toasted.chuck.ChuckGame;
 import com.toasted.chuck.Graphics;
 import com.toasted.chuck.Level;
 
