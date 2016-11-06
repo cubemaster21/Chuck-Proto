@@ -9,6 +9,7 @@ public class Light {
 	private static Vector2 tmp = new Vector2();
 	private Vector2 position;
 	private float intensity = 1;
+	private boolean isEmitting = true;
 	public Light(float x, float y, float intensity){
 		position = new Vector2(x, y);
 		this.intensity = intensity;
@@ -28,5 +29,13 @@ public class Light {
 	public float getIntensity(){
 		return intensity;
 	}
-	
+	public void setIntensity(float value){
+		intensity = value;
+	}
+	public boolean isEmitting(){
+		return isEmitting;
+	}
+	public void setEmitting(boolean state){
+		isEmitting = state;
+	}
 }

@@ -40,6 +40,10 @@ void main() {
    	brightest = brightest + dis2Light2 - brightest * dis2Light2;
    }
    texColor.rgb = texColor.rgb * (sin(pow(brightest, 10) * M_PI / 2));
+   
+   //apply torchlight tint
+   texColor.b = texColor.b * 0.7;
+   texColor.g = texColor.g * 0.9;
    //final color
    gl_FragColor = texColor * vColor;
 }

@@ -15,8 +15,10 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.toasted.chuck.entities.Entity;
+import com.toasted.chuck.entities.EntityBat;
 import com.toasted.chuck.entities.EntityBox;
 import com.toasted.chuck.entities.EntityPlayer;
+import com.toasted.chuck.entities.EntityPressurePad;
 import com.toasted.chuck.entities.EntityTorch;
 
 public class Level {
@@ -36,7 +38,7 @@ public class Level {
 		zSorter = new Comparator<Entity>(){
 
 			public int compare(Entity arg0, Entity arg1) {
-				return (int) Math.signum(arg1.getY() - arg0.getY());
+				return (int) Math.signum(arg1.getZSortValue() - arg0.getZSortValue());
 				
 			}
 			
@@ -132,11 +134,18 @@ public class Level {
 		Vector2 t = new Vector2();
 		t = r.getCenter(t);
 		Entity newEntity = null;
-		if(o.getProperties().get("type").equals("torch")){
+		String type = (String) o.getProperties().get("type");
+		if(type.equals("torch")){
 			newEntity = new EntityTorch(t.x - r.getWidth() / 2, t.y - r.getHeight() / 2);
 		}
-		if(o.getProperties().get("type").equals("box")){
+		if(type.equals("box")){
 			newEntity = new EntityBox(t.x - r.getWidth() / 2, t.y - r.getHeight() / 2);
+		}
+		if(type.equals("pressurePad")){
+			newEntity = new EntityPressurePad(t.x - r.getWidth() / 2, t.y - r.getHeight() / 2);
+		}
+		if(type.equals("bat")){
+			newEntity = new EntityBat(r.x, r.y);
 		}
 		if(listToAdd == null){
 			spawnEntity(newEntity);

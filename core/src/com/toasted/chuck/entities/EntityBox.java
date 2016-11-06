@@ -12,10 +12,7 @@ public class EntityBox extends Entity{
 	Texture shadow = new Texture("shadow.png");
 	
 	public EntityBox(float x, float y){
-		super();
-		position.x = x;
-		position.y = y;
-		collision = new Rectangle(x, y, 16, 16);
+		super(x, y);
 		weight = 1;
 	}
 	public void update(float delta, Level lvl) {
@@ -29,6 +26,16 @@ public class EntityBox extends Entity{
 				String layerOpened = (String) mp.get("destructable");
 				lvl.getCollisions().remove(r);
 				lvl.revealSecretRoom(layerOpened);
+			}
+		}
+		if(flyLength > 0){
+			//can hit enemies while in air
+			for(Entity e: lvl.getEntities()){
+				if(e.isHostile && e.collision.overlaps(collision)){
+					velocity.x = 0;
+					velocity.y = 0;
+					e.stun(4f);
+				}
 			}
 		}
 	}

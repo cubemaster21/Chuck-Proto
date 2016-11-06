@@ -16,12 +16,22 @@ public abstract class Entity {
 	protected float flyLength;
 	protected boolean isChuckable = true;
 	protected boolean shouldDrawSelf = true;
+	protected boolean isHostile = false;
+	protected float stunTimer = 0;
 	protected float weight = 0; //used for destruction capabilities and pressure plate triggering
 	public Entity(){
 		
 	}
+	public Entity(float x, float y){
+		position = new Vector2(x, y);
+		collision = new Rectangle(x, y, 16, 16);
+	}
 	public abstract void update(float delta, Level lvl);
 	protected Rectangle doCollisions(float delta, ArrayList<Rectangle> collisions){
+		if(stunTimer > 0) {
+			stunTimer -= delta;
+			return null;
+		}
 		Rectangle collidedWith = null;
 		position.x += velocity.x * delta;
 		
@@ -86,5 +96,11 @@ public abstract class Entity {
 	}
 	public EntityController getController(){
 		return controller;
+	}
+	public float getZSortValue(){
+		return getY();
+	}
+	public void stun(float duration){
+		this.stunTimer = duration;
 	}
 }

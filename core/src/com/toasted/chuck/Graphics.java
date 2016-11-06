@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
@@ -24,7 +26,7 @@ public class Graphics {
     final float orthoScale = orthoX / (float)getWidth();
     public float lightValueMultiplier = 1f; // for testing fade out
     private static int MAX_LIGHTS = 50;
-    
+    private static Texture textureMap;
     ShaderProgram shader = new ShaderProgram(VERTEX, FRAGMENT);
 	public Graphics(){
 		cam = new OrthographicCamera();
@@ -77,17 +79,26 @@ public class Graphics {
 		if(lights.size() > MAX_LIGHTS){ // if there are too many to do
 			
 		} else {
-			shader.setUniformi("u_actualLights", lights.size());
-			shader.setUniformf("u_ambientLight", Light.VAL_AMBIENT);
+			
 			int loc = shader.getUniformLocation("u_lightCoord[0]");
 			int locIn = shader.getUniformLocation("u_lightIntensity[0]");
+			int nullLights = 0;
 			for(int i = 0;i < lights.size();i++){
-				
+				if(lights.get(i) == null || !lights.get(i).isEmitting()){
+					nullLights++;
+					continue;
+				}
 				Vector3 v3 = cam.project(new Vector3(lights.get(i).getX(), lights.get(i).getY(), 0));
 				Vector2 v = new Vector2(v3.x, v3.y);
 				shader.setUniformf(loc + i, v);
 				shader.setUniformf(locIn + i, lights.get(i).getIntensity() * lightValueMultiplier);
 			}
+			shader.setUniformi("u_actualLights", lights.size() - nullLights);
+			shader.setUniformf("u_ambientLight", Light.VAL_AMBIENT);
 		}
+	}
+	public static TextureRegion getSubTexture(int i){
+		if(textureMap == null) textureMap = new Texture("env.png");
+		return new TextureRegion(textureMap, (i % 8) * 16, (i / 8) * 16, 16, 16);
 	}
 }
