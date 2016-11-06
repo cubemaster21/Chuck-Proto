@@ -82,18 +82,22 @@ public class Graphics {
 			
 			int loc = shader.getUniformLocation("u_lightCoord[0]");
 			int locIn = shader.getUniformLocation("u_lightIntensity[0]");
-			int nullLights = 0;
-			for(int i = 0;i < lights.size();i++){
-				if(lights.get(i) == null || !lights.get(i).isEmitting()){
-					nullLights++;
+			int locCol = shader.getUniformLocation("u_lightColor[0]");
+			int i = 0;
+			for(Light l: lights){
+				if(l == null || !l.isEmitting()){
 					continue;
 				}
-				Vector3 v3 = cam.project(new Vector3(lights.get(i).getX(), lights.get(i).getY(), 0));
+				Vector3 v3 = cam.project(new Vector3(l.getX(), l.getY(), 0));
 				Vector2 v = new Vector2(v3.x, v3.y);
 				shader.setUniformf(loc + i, v);
-				shader.setUniformf(locIn + i, lights.get(i).getIntensity() * lightValueMultiplier);
+				shader.setUniformf(locIn + i, l.getIntensity() * lightValueMultiplier);
+				
+				shader.setUniformf(locCol + i, l.getLightColor());
+				i++;
+				
 			}
-			shader.setUniformi("u_actualLights", lights.size() - nullLights);
+			shader.setUniformi("u_actualLights", i);
 			shader.setUniformf("u_ambientLight", Light.VAL_AMBIENT);
 		}
 	}

@@ -137,6 +137,12 @@ public class Level {
 		String type = (String) o.getProperties().get("type");
 		if(type.equals("torch")){
 			newEntity = new EntityTorch(t.x - r.getWidth() / 2, t.y - r.getHeight() / 2);
+			if(o.getProperties().containsKey("customColor")){
+				LightEmitter le  = (LightEmitter)newEntity;
+				String[] rgbValues = ((String)o.getProperties().get("customColor")).split(",");
+				System.out.println("Setting CUSTOM RGB");
+				le.getLight().setLightColor(Float.parseFloat(rgbValues[0]), Float.parseFloat(rgbValues[1]), Float.parseFloat(rgbValues[2]));
+			}
 		}
 		if(type.equals("box")){
 			newEntity = new EntityBox(t.x - r.getWidth() / 2, t.y - r.getHeight() / 2);

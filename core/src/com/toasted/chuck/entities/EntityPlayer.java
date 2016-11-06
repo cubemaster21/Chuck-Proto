@@ -47,6 +47,14 @@ public class EntityPlayer extends Entity implements LightEmitter{
 								if(e.collision.overlaps(collision) && e.isChuckable){
 									holding = e;
 									holding.shouldDrawSelf = false;
+									
+									if(holding instanceof LightEmitter){
+										LightEmitter le = (LightEmitter)holding;
+										System.err.println(le.getLight());
+									}
+									
+									
+									
 									break;
 								}
 							}

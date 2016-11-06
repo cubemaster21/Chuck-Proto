@@ -19,6 +19,7 @@ public abstract class Entity {
 	protected boolean isHostile = false;
 	protected float stunTimer = 0;
 	protected float weight = 0; //used for destruction capabilities and pressure plate triggering
+	protected int health  = 3;
 	public Entity(){
 		
 	}

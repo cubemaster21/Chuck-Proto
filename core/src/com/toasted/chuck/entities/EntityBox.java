@@ -31,7 +31,7 @@ public class EntityBox extends Entity{
 		if(flyLength > 0){
 			//can hit enemies while in air
 			for(Entity e: lvl.getEntities()){
-				if(e.isHostile && e.collision.overlaps(collision)){
+				if(e.isHostile && e.collision.overlaps(collision) && weight > .75f){
 					velocity.x = 0;
 					velocity.y = 0;
 					e.stun(4f);
@@ -41,8 +41,6 @@ public class EntityBox extends Entity{
 	}
 
 	public void draw(Graphics g) {
-//		g.getShapes().setColor(Color.BLUE);
-//		g.getShapes().rect(position.x, position.y + (float)Math.sin((1 - Math.max(flyLength, 0) / .5f) * Math.PI) * 8, 16, 16);
 		if(shouldDrawSelf)
 			draw(g, 0, 0);
 		

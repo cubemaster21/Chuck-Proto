@@ -28,6 +28,7 @@ public class EntityTorch extends EntityBox implements LightEmitter{
 	public EntityTorch(float x, float y) {
 		super(x, y);
 		emitter = new Light(x + collision.width / 2, y + collision.height / 2, .3f);
+		emitter.setLightColor(1, .9f, .7f);
 		weight = 0;
 	}
 
