@@ -1,9 +1,6 @@
 package com.toasted.chuck.entities;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 import com.toasted.chuck.Graphics;
 import com.toasted.chuck.Level;
 import com.toasted.chuck.Light;

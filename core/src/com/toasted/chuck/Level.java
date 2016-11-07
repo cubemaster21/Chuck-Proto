@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapProperties;
@@ -31,6 +32,8 @@ public class Level {
 	private ArrayList<Light> lights = new ArrayList<Light>();
 	private HashMap<Rectangle, MapObject> collisionLookupTable = new HashMap<Rectangle, MapObject>();
 	private ArrayList<SecretRoom> secretRooms = new ArrayList<SecretRoom>();
+	
+	private Sound doorOpening = Audio.getSound("doorOpen.wav");
 	
 	public Level(String filename, Graphics graphics){
 		tiledMap = new TmxMapLoader().load("testmap.tmx");
@@ -109,9 +112,13 @@ public class Level {
 	
 	
 	public void revealSecretRoom(String name){
+		
 		MapLayer layer = tiledMap.getLayers().get(name);
 		if(layer != null){
 			layer.setVisible(true);
+			doorOpening.play();
+			
+			
 		} else {
 			System.err.println("Failed to reveal room: " + name);
 		}
@@ -140,7 +147,7 @@ public class Level {
 			if(o.getProperties().containsKey("customColor")){
 				LightEmitter le  = (LightEmitter)newEntity;
 				String[] rgbValues = ((String)o.getProperties().get("customColor")).split(",");
-				System.out.println("Setting CUSTOM RGB");
+//				System.out.println("Setting CUSTOM RGB");
 				le.getLight().setLightColor(Float.parseFloat(rgbValues[0]), Float.parseFloat(rgbValues[1]), Float.parseFloat(rgbValues[2]));
 			}
 		}

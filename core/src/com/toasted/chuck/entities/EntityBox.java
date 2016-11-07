@@ -16,9 +16,15 @@ public class EntityBox extends Entity{
 		weight = 1;
 	}
 	public void update(float delta, Level lvl) {
+		float preFly = flyLength;
 		flyLength -= delta;
-		if(flyLength <= 0)
+		if(preFly > 0 && flyLength <= 0){
+			drop.play(1f, (1- weight) + .5f, 0);
+			
+		}
+		if(flyLength <= 0){
 			velocity.mulAdd(velocity, -delta * decel);
+		}
 		Rectangle r = doCollisions(delta, lvl.getCollisions());
 		if(r != null){
 			if(lvl.isCollisionBoxDestructable(r) && weight > .75f){

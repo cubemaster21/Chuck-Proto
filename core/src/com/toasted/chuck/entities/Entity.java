@@ -2,8 +2,11 @@ package com.toasted.chuck.entities;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.toasted.chuck.Audio;
 import com.toasted.chuck.EntityController;
 import com.toasted.chuck.Graphics;
 import com.toasted.chuck.Level;
@@ -20,6 +23,10 @@ public abstract class Entity {
 	protected float stunTimer = 0;
 	protected float weight = 0; //used for destruction capabilities and pressure plate triggering
 	protected int health  = 3;
+	
+	protected static Sound hurt = Audio.getSound("hurt.wav");
+	protected static Sound drop = Audio.getSound("drop.wav");
+	protected static Sound step = Audio.getSound("step.wav");
 	public Entity(){
 		
 	}
@@ -102,6 +109,8 @@ public abstract class Entity {
 		return getY();
 	}
 	public void stun(float duration){
+		if(stunTimer > 0) return;
+		hurt.play();
 		this.stunTimer = duration;
 	}
 }

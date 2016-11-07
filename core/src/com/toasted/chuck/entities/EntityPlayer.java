@@ -3,10 +3,12 @@ package com.toasted.chuck.entities;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.toasted.chuck.Audio;
 import com.toasted.chuck.EntityController;
 import com.toasted.chuck.Graphics;
 import com.toasted.chuck.Level;
@@ -24,6 +26,12 @@ public class EntityPlayer extends Entity implements LightEmitter{
 	private int lastDirectionalUsed;
 	private ArrayList<Integer> directionals = new ArrayList<Integer>();//Don't think I'll use this
 	private boolean[] arrowKeys = new boolean[4]; //UDLR
+	
+	private float stepTimerFull = .25f;
+	private float stepTimer = stepTimerFull;
+	private static Sound pickup = Audio.getSound("pickup.wav");
+	private static Sound throwing = Audio.getSound("throw.wav");
+	
 	public EntityPlayer(){
 		weight = 1;
 		isChuckable = false;
@@ -47,10 +55,9 @@ public class EntityPlayer extends Entity implements LightEmitter{
 								if(e.collision.overlaps(collision) && e.isChuckable){
 									holding = e;
 									holding.shouldDrawSelf = false;
-									
+									pickup.play();
 									if(holding instanceof LightEmitter){
 										LightEmitter le = (LightEmitter)holding;
-										System.err.println(le.getLight());
 									}
 									
 									
@@ -62,7 +69,7 @@ public class EntityPlayer extends Entity implements LightEmitter{
 							holding.velocity.add(velocity).mulAdd(getDirectionalVector(), throwSpeed);
 							holding.flyLength = .5f;
 							holding.shouldDrawSelf = true;
-							
+							throwing.play();
 							holding = null;
 						}
 						break;
@@ -176,8 +183,14 @@ public class EntityPlayer extends Entity implements LightEmitter{
 			
 		doControls();
 		
-		
-		
+		float vectorMag = (float)Math.sqrt(Math.pow(velocity.x, 2) + Math.pow(velocity.y, 2));
+		if(vectorMag != 0){
+			stepTimer -= delta;
+			if(stepTimer <= 0){
+				stepTimer = stepTimerFull;
+				step.play(.5f, 1, 0);
+			}
+		}
 		doCollisions(delta, lvl.getCollisions());
 		
 		
